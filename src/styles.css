@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+  Paleta "veludo de vitrine": pérola lilás de fundo, tinta índigo no texto,
+  ametista como cor de ação e rubi só para promoção. O dourado aparece apenas
+  nas peças e nos destaques do laboratório, como o metal de verdade.
+*/
+:root {
+  color-scheme: light;
+  --radius: 0.75rem;
+
+  --background: #f1eef7;
+  --foreground: #221d3a;
+  --card: #ffffff;
+  --card-foreground: #221d3a;
+  --primary: #4b3380;
+  --primary-foreground: #ffffff;
+  --secondary: #e4def1;
+  --secondary-foreground: #221d3a;
+  --muted: #e9e4f3;
+  --muted-foreground: #5a536f;
+  --accent: #dcd3ee;
+  --accent-foreground: #221d3a;
+  --destructive: #b3294e;
+  --border: #d9d1e8;
+  --input: #cbc1df;
+  --ring: #7c5cc4;
+  --ouro: #c9a24b;
+  --veludo: #2b1f4d;
+}
+
+@theme inline {
+  --font-sans: 'Hanken Grotesk Variable', system-ui, sans-serif;
+  --font-display: 'Italiana', Georgia, serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ouro: var(--ouro);
+  --color-veludo: var(--veludo);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400; /* Italiana só existe em peso 400: evita negrito falso */
+    text-wrap: balance;
+  }
+  button,
+  a,
+  input {
+    touch-action: manipulation;
+  }
+}
+
+/* Laboratório do Virtual DOM: o nó que o React realmente alterou "acende".
+   Animamos só a opacidade de um pseudo-elemento (barato para o navegador). */
+.lab-linha {
+  position: relative;
+  overflow: hidden;
+}
+.lab-linha.piscou::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ouro);
+  opacity: 0;
+  pointer-events: none;
+  animation: acender 1.3s ease-out;
+}
+@keyframes acender {
+  from { opacity: 0.45; }
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
