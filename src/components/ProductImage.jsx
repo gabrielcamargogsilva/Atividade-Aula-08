@@ -29,7 +29,7 @@ function ProductImage({ produto, tamanho = 600, prioridade = false, className = 
       width={tamanho}
       height={tamanho}
       loading={prioridade ? 'eager' : 'lazy'}
-      fetchPriority={prioridade ? 'high' : 'auto'}
+      fetchpriority={prioridade ? 'high' : 'auto'}
       decoding="async"
       referrerPolicy="no-referrer"
       onError={() => setFalhou(true)}

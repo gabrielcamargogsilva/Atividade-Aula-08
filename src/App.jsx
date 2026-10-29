@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
 import Section from '@/components/Section'
@@ -6,6 +7,7 @@ import CategoryFilter from '@/components/CategoryFilter'
 import ProductList from '@/components/ProductList'
 import Cart from '@/components/Cart'
 import { produtos, categorias } from '@/data/produtos'
+import Detalhes from '@/pages/Detalhes'
 
 // App é o componente raiz: guarda o estado compartilhado (busca, categoria,
 // carrinho) e o distribui para os filhos por PROPS. Os filhos devolvem eventos
@@ -23,20 +25,25 @@ function lerUrl() {
 }
 
 function App() {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [inicial] = useState(lerUrl)
   const [busca, setBusca] = useState(inicial.busca)
   const buscaAnterior = useRef(inicial.busca)
   const [categoria, setCategoria] = useState(inicial.categoria)
   const [carrinho, setCarrinho] = useState([]) // [{ id, qtd }]
+  const [freteEntrega, setFreteEntrega] = useState(null)
   const [carrinhoAberto, setCarrinhoAberto] = useState(false)
 
   useEffect(() => {
+    if (location.pathname !== '/') return
+
     const p = new URLSearchParams()
     if (categoria !== 'Todas') p.set('categoria', categoria)
     if (busca.trim()) p.set('busca', busca.trim())
     const qs = p.toString()
-    window.history.replaceState(null, '', qs ? `?${qs}` : window.location.pathname)
-  }, [categoria, busca])
+    navigate({ pathname: '/', search: qs ? `?${qs}` : '' }, { replace: true })
+  }, [categoria, busca, location.pathname, navigate])
 
   useEffect(() => {
     const iniciouBusca = !buscaAnterior.current.trim() && busca.trim()
@@ -96,6 +103,11 @@ function App() {
     setCategoria('Todas')
   }
 
+  function buscar(texto) {
+    setBusca(texto)
+    if (location.pathname !== '/') navigate('/')
+  }
+
   const contagem =
     produtosVisiveis.length === 0
       ? 'Nenhuma peça encontrada'
@@ -104,26 +116,49 @@ function App() {
   return (
     <div id="topo">
       <a
-        href="#catalogo"
+        href="#conteudo-principal"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
       >
-        Pular para o catálogo
+        Pular para o conteúdo principal
       </a>
 
-      <Header busca={busca} onBuscar={setBusca} totalItens={totalItens} onAbrirCarrinho={() => setCarrinhoAberto(true)} />
+      <Header busca={busca} onBuscar={buscar} totalItens={totalItens} onAbrirCarrinho={() => setCarrinhoAberto(true)} />
 
-      <main className="mx-auto max-w-6xl px-4 pb-24 sm:px-8">
-        <Hero />
-
-        <Section id="catalogo" titulo="Catálogo" descricao="Anéis, colares, brincos e pulseiras para todos os dias.">
-          <CategoryFilter categorias={categorias} ativa={categoria} onSelecionar={setCategoria} />
-          <p className="-mt-2 mb-6 text-sm text-muted-foreground" aria-live="polite">
-            {contagem}
-          </p>
-          <ProductList produtos={produtosVisiveis} carrinho={carrinho} onAdicionar={adicionar} onLimparFiltros={limparFiltros} />
-        </Section>
-
-
+      <main id="conteudo-principal" className="mx-auto max-w-6xl px-4 pb-24 sm:px-8">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero />
+                <Section id="catalogo" titulo="Catálogo" descricao="Anéis, colares, brincos e pulseiras para todos os dias.">
+                  <CategoryFilter categorias={categorias} ativa={categoria} onSelecionar={setCategoria} />
+                  <p className="-mt-2 mb-6 text-sm text-muted-foreground" aria-live="polite">
+                    {contagem}
+                  </p>
+                  <ProductList
+                    produtos={produtosVisiveis}
+                    carrinho={carrinho}
+                    onAdicionar={adicionar}
+                    onLimparFiltros={limparFiltros}
+                  />
+                </Section>
+              </>
+            }
+          />
+          <Route
+            path="/produto/:id"
+            element={
+              <Detalhes
+                carrinho={carrinho}
+                total={totalPreco}
+                onFreteCalculado={setFreteEntrega}
+                onAdicionar={adicionar}
+              />
+            }
+          />
+          <Route path="*" element={<p className="py-16 text-center">Página não encontrada.</p>} />
+        </Routes>
       </main>
 
       <footer className="border-t py-10 text-sm text-muted-foreground">
@@ -160,6 +195,8 @@ function App() {
         onAbertoChange={setCarrinhoAberto}
         itens={itensDoCarrinho}
         total={totalPreco}
+        freteEntrega={freteEntrega}
+        onFreteCalculado={setFreteEntrega}
         onAlterarQtd={alterarQtd}
         onRemover={remover}
         onLimpar={() => setCarrinho([])}

@@ -8,7 +8,38 @@ export function urlFoto(foto, largura, altura = largura) {
 
 export const categorias = ['Todas', 'Anéis', 'Colares', 'Brincos', 'Pulseiras']
 
-export const FRETE_GRATIS_A_PARTIR_DE = 199
+export const FRETE_GRATIS_A_PARTIR_DE = 200
+
+// Estimativa didática por estado. O Centro-Oeste usa a mesma faixa do Norte/Nordeste.
+export const FRETE_POR_UF = {
+  AC: { regiao: 'Norte', valor: 50 },
+  AL: { regiao: 'Nordeste', valor: 50 },
+  AP: { regiao: 'Norte', valor: 50 },
+  AM: { regiao: 'Norte', valor: 50 },
+  BA: { regiao: 'Nordeste', valor: 50 },
+  CE: { regiao: 'Nordeste', valor: 50 },
+  DF: { regiao: 'Centro-Oeste', valor: 50 },
+  ES: { regiao: 'Sudeste', valor: 20 },
+  GO: { regiao: 'Centro-Oeste', valor: 50 },
+  MA: { regiao: 'Nordeste', valor: 50 },
+  MT: { regiao: 'Centro-Oeste', valor: 50 },
+  MS: { regiao: 'Centro-Oeste', valor: 50 },
+  MG: { regiao: 'Sudeste', valor: 20 },
+  PA: { regiao: 'Norte', valor: 50 },
+  PB: { regiao: 'Nordeste', valor: 50 },
+  PR: { regiao: 'Sul', valor: 30 },
+  PE: { regiao: 'Nordeste', valor: 50 },
+  PI: { regiao: 'Nordeste', valor: 50 },
+  RJ: { regiao: 'Sudeste', valor: 20 },
+  RN: { regiao: 'Nordeste', valor: 50 },
+  RS: { regiao: 'Sul', valor: 30 },
+  RO: { regiao: 'Norte', valor: 50 },
+  RR: { regiao: 'Norte', valor: 50 },
+  SC: { regiao: 'Sul', valor: 30 },
+  SP: { regiao: 'Sudeste', valor: 20 },
+  SE: { regiao: 'Nordeste', valor: 50 },
+  TO: { regiao: 'Norte', valor: 50 },
+}
 
 // Fotos do topo da página (ids de produtos da lista abaixo).
 export const IDS_HERO = { principal: 2, apoio: 7 }
@@ -48,5 +79,3 @@ export const produtos = [
   { id: 12, nome: 'Pulseira Olho Grego', categoria: 'Pulseiras', tipo: 'pulseira', preco: 79.9, precoAntigo: null, estoque: 15, novo: false,
     detalhe: 'Com pingente de olho grego', foto: 'photo-1721206624492-3d05631471ea', fotoAlt: 'Mulher usando pulseira com pingente de olho grego', fotoPagina: 'https://unsplash.com/photos/a-woman-wearing-a-bracelet-with-a-evil-eye-on-it-W49Oxm_WnmI' },
 ]
-
-

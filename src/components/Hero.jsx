@@ -12,7 +12,7 @@ function Hero() {
       <div>
         <h1 className="text-5xl leading-[1.02] tracking-tight sm:text-7xl">Brilho de joia, preço de semijoia</h1>
         <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
-          Anéis, colares, brincos e pulseiras para usar todos os dias. Frete grátis em compras acima de R$&nbsp;199.
+          Anéis, colares, brincos e pulseiras para usar todos os dias. Frete grátis a partir de R$&nbsp;200.
         </p>
 
         <Button asChild size="lg" className="mt-10">
