@@ -28,7 +28,13 @@ O projeto foi desenvolvido colocando em prática os seis conceitos fundamentais 
 
 - Fotos reais do Unsplash (hero, catálogo e carrinho), com ilustração em SVG como reserva se a foto não carregar
 - 12 peças, filtro por categoria e busca por nome, refletidos na URL (`?categoria=Colares`)
-- Carrinho em painel lateral com quantidade, limite de estoque, total e barra de frete grátis (a partir de R$ 199)
+- Página de detalhes por produto (`/produto/:id`) com consulta de endereço pela API pública ViaCEP
+- Carrinho em painel lateral com quantidade, limite de estoque, total e barra de frete grátis (a partir de R$ 200)
+- Consulta de CEP e estimativa de frete no carrinho quando o pedido ainda não alcança o valor mínimo para frete grátis
+
+Na página de detalhes e no carrinho, o ViaCEP localiza o endereço e a UF para estimar o frete. O serviço não calcula o preço do frete; as faixas por região são regras didáticas da loja.
+
+O cálculo estimado usa a UF consultada pelo ViaCEP: Norte, Nordeste e Centro-Oeste (R$ 50), Sudeste (R$ 20) e Sul (R$ 30). Depois de consultar um CEP válido, o carrinho soma o frete ao subtotal das peças e exibe o total. Pedidos a partir de R$ 200 têm frete grátis. Os valores são ilustrativos e não representam uma cotação real de transportadora.
 
 ## Fotos
 

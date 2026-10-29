@@ -3,21 +3,26 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import CartItem from '@/components/CartItem'
+import FreteCalculator from '@/components/FreteCalculator'
 import { FRETE_GRATIS_A_PARTIR_DE } from '@/data/produtos'
 import { formatarPreco } from '@/utils'
 
 // O carrinho é um Sheet (painel lateral do shadcn/ui). Quem controla se está aberto
 // é o App, por isso recebemos `aberto` e `onAbertoChange` por PROPS.
 
-function Cart({ aberto, onAbertoChange, itens, total, onAlterarQtd, onRemover, onLimpar }) {
+function Cart({ aberto, onAbertoChange, itens, total, freteEntrega, onFreteCalculado, onAlterarQtd, onRemover, onLimpar }) {
   const [confirmandoLimpar, setConfirmandoLimpar] = useState(false)
   const [pedidoFeito, setPedidoFeito] = useState(false)
 
+  const temFreteGratis = total >= FRETE_GRATIS_A_PARTIR_DE
   const faltaParaFrete = FRETE_GRATIS_A_PARTIR_DE - total
   const progresso = Math.min(100, (total / FRETE_GRATIS_A_PARTIR_DE) * 100)
+  const valorFrete = temFreteGratis ? 0 : freteEntrega?.valor ?? null
+  const totalComFrete = total + (valorFrete ?? 0)
 
   function finalizar() {
     onLimpar()
+    onFreteCalculado(null)
     setPedidoFeito(true)
   }
 
@@ -57,7 +62,7 @@ function Cart({ aberto, onAbertoChange, itens, total, onAlterarQtd, onRemover, o
         ) : (
           <>
             <div className="bg-secondary px-5 py-3 text-sm" aria-live="polite">
-              {faltaParaFrete > 0 ? (
+              {!temFreteGratis ? (
                 <p>
                   Faltam <strong className="tabular-nums">{formatarPreco(faltaParaFrete)}</strong> para o frete grátis.
                 </p>
@@ -70,17 +75,42 @@ function Cart({ aberto, onAbertoChange, itens, total, onAlterarQtd, onRemover, o
             </div>
 
             {/* LISTA + KEY: um <CartItem> para cada item, com key = id do produto */}
-            <ul className="flex-1 overflow-y-auto px-5">
-              {itens.map((item) => (
-                <CartItem key={item.id} item={item} onAlterarQtd={onAlterarQtd} onRemover={onRemover} />
-              ))}
-            </ul>
+            <div className="flex-1 overflow-y-auto px-5">
+              <ul>
+                {itens.map((item) => (
+                  <CartItem key={item.id} item={item} onAlterarQtd={onAlterarQtd} onRemover={onRemover} />
+                ))}
+              </ul>
+              {!temFreteGratis && (
+                <FreteCalculator
+                  total={total}
+                  onFreteCalculado={onFreteCalculado}
+                  className="my-4 rounded-2xl border bg-card p-4"
+                />
+              )}
+            </div>
 
             <SheetFooter className="border-t">
-              <p className="flex items-baseline justify-between text-lg tabular-nums">
-                <span>Total</span>
-                <strong>{formatarPreco(total)}</strong>
-              </p>
+              <div className="space-y-1 text-sm tabular-nums">
+                <p className="flex items-baseline justify-between">
+                  <span>Subtotal</span>
+                  <span>{formatarPreco(total)}</span>
+                </p>
+                <p className="flex items-baseline justify-between">
+                  <span>Frete{freteEntrega && !temFreteGratis ? ` (${freteEntrega.uf})` : ''}</span>
+                  <span>
+                    {temFreteGratis
+                      ? 'Grátis'
+                      : valorFrete === null
+                        ? 'Informe o CEP'
+                        : formatarPreco(valorFrete)}
+                  </span>
+                </p>
+                <p className="flex items-baseline justify-between pt-2 text-lg">
+                  <strong>Total</strong>
+                  <strong>{formatarPreco(totalComFrete)}</strong>
+                </p>
+              </div>
               <Button size="lg" onClick={finalizar}>
                 Finalizar compra
               </Button>
@@ -92,7 +122,7 @@ function Cart({ aberto, onAbertoChange, itens, total, onAlterarQtd, onRemover, o
                     <Button variant="ghost" size="sm" onClick={() => setConfirmandoLimpar(false)}>
                       Cancelar
                     </Button>
-                    <Button variant="destructive" size="sm" onClick={() => { onLimpar(); setConfirmandoLimpar(false) }}>
+                    <Button variant="destructive" size="sm" onClick={() => { onLimpar(); onFreteCalculado(null); setConfirmandoLimpar(false) }}>
                       Esvaziar
                     </Button>
                   </span>
